@@ -93,7 +93,7 @@ if __name__ == "__main__":
     
     model = Network(num_classes=10)
     optimizer = optim.SGD(model.parameters(), lr = 1e-3, momentum=0.9)
-    loss = LCAConClsLoss(sim = 'cosine', tau = 1.0)
+    loss = LCAConClsLoss(sim = 'mse', tau = 1.0)
     train_dl, test_dl = CIFAR_dataloader(data_dir="datasets/cifar10")
 
     return_logs = False
