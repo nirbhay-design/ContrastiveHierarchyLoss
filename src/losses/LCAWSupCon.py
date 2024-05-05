@@ -10,11 +10,11 @@ class LCAWSupConLoss(nn.Module):
         self.sim = sim 
 
     def forward(self, features, labels):
+        B, _ = features.shape
         # calculate pair wise similarity 
         sim_mat = self.calculate_sim_matrix(features)
         # division by temperature
-        sim_mat = F.log_softmax(sim_mat / self.tau, dim = -1)
-        print(sim_mat)
+        sim_mat = F.log_softmax(sim_mat / self.tau, dim = -1)  
         # calculating pair wise equal labels for pos pairs
         labels = labels.unsqueeze(1)
         labels_mask = (labels == labels.T).type(torch.float32)
