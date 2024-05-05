@@ -1,4 +1,4 @@
-from src.losses.LCAWSupCon import LCAWSupConLoss
+from src.losses.LCAWSupCon import LCAConClsLoss
 from src.network.Network import Network
 from src.dataset.data import CIFAR_dataloader
 import torch 
@@ -86,4 +86,29 @@ def train(model, train_loader, test_loader, lossfunction, optimizer, eval_every,
     return model, tval
 
 if __name__ == "__main__":
-    pass 
+    torch.backends.cudnn.benchmarks = True
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cuda.matmul.allow_tf32 = True
+    torch.backends.cudnn.allow_tf32 = True
+    
+    model = Network(num_classes=10)
+    optimizer = optim.SGD(model.parameters(), lr = 1e-3, momentum=0.9)
+    loss = LCAConClsLoss(sim = 'cosine', tau = 1.0)
+    train_dl, test_dl = CIFAR_dataloader()
+
+    return_logs = True
+    eval_every = 5
+    n_epochs = 1
+    device = torch.device("cuda:0")
+
+    train(
+        model,
+        train_dl,
+        test_dl,
+        loss,
+        optimizer,
+        eval_every,
+        n_epochs,
+        device,
+        return_logs
+    )

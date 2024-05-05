@@ -41,6 +41,18 @@ class LCAWSupConLoss(nn.Module):
         # filling diagonal with -torch.inf as it will be cancel out while doing softmax
         sim_mat.fill_diagonal_(-torch.tensor(torch.inf))
         return sim_mat 
+    
+class LCAConClsLoss(nn.Module):
+    def __init__(self, sim = 'cosine', tau = 1.0):
+        super().__init__()
+        self.tau = tau
+        self.sim = sim 
+        self.ce = nn.CrossEntropyLoss()
+        self.lcasupcon = LCAConClsLoss(sim, tau)
+    
+    def forward(self, features, scores, labels):
+        return self.lcasupcon(features, labels) + self.ce(scores, labels)
+
 
 if __name__ == "__main__":
     x1 = torch.rand(4,5)
