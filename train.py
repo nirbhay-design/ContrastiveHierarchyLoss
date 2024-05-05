@@ -71,9 +71,9 @@ def train(model, train_loader, test_loader, lossfunction, optimizer, eval_every,
             if return_logs:
                 progress(idx+1,len(train_loader))
         
-        if eval_every % (epochs + 1) == 0:
+        if epochs % eval_every == 0:
             cur_test_acc = evaluate(model, test_loader, device, return_logs)
-            print(f"Test Accuracy at epoch: {epochs + 1}: {cur_test_acc}")
+            print(f"Test Accuracy at epoch: {epochs}: {cur_test_acc}")
       
         tval['trainacc'].append(float(curacc))
         tval['trainloss'].append(float(cur_loss))
