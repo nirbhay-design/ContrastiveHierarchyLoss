@@ -14,7 +14,7 @@ class LCAWSupConLoss(nn.Module):
         sim_mat = self.calculate_sim_matrix(features)
         # division by temperature
         sim_mat = F.log_softmax(sim_mat / self.tau, dim = -1)
-        sim_mat.fill_diagonal_(torch.tensor(0.0))
+        # sim_mat.fill_diagonal_(torch.tensor(0.0))
         # calculating pair wise equal labels for pos pairs
         labels = labels.unsqueeze(1)
         labels_mask = (labels == labels.T).type(torch.float32)
@@ -48,7 +48,7 @@ class LCAConClsLoss(nn.Module):
         self.tau = tau
         self.sim = sim 
         self.ce = nn.CrossEntropyLoss()
-        self.lcasupcon = LCAConClsLoss(sim, tau)
+        self.lcasupcon = LCAWSupConLoss(sim, tau)
     
     def forward(self, features, scores, labels):
         return self.lcasupcon(features, labels) + self.ce(scores, labels)

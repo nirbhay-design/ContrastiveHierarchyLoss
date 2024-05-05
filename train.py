@@ -37,7 +37,7 @@ def evaluate(model, loader, device, return_logs=False):
             if return_logs:
                 progress(idx+1,loader_len)
                 # print('batches done : ',idx,end='\r')
-        accuracy = round(correct / samples, 3)
+        accuracy = round(float(correct / samples), 3)
     model.train()
     return accuracy 
 
@@ -71,7 +71,7 @@ def train(model, train_loader, test_loader, lossfunction, optimizer, eval_every,
             if return_logs:
                 progress(idx+1,len(train_loader))
         
-        if eval_every % epochs == 0:
+        if eval_every % (epochs + 1) == 0:
             cur_test_acc = evaluate(model, test_loader, device, return_logs)
             print(f"Test Accuracy at {epochs}: {cur_test_acc}")
       
@@ -94,7 +94,7 @@ if __name__ == "__main__":
     model = Network(num_classes=10)
     optimizer = optim.SGD(model.parameters(), lr = 1e-3, momentum=0.9)
     loss = LCAConClsLoss(sim = 'cosine', tau = 1.0)
-    train_dl, test_dl = CIFAR_dataloader()
+    train_dl, test_dl = CIFAR_dataloader(data_dir="datasets/cifar10")
 
     return_logs = True
     eval_every = 5

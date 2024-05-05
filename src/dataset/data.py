@@ -2,7 +2,7 @@ import torch
 import torchvision 
 import torchvision.transforms as transforms
 
-def CIFAR_dataloader():
+def CIFAR_dataloader(data_dir):
     transformations = transforms.Compose([
         transforms.RandomHorizontalFlip(0.6),
         transforms.ToTensor(),
@@ -15,13 +15,13 @@ def CIFAR_dataloader():
     ])
 
     dataset = torchvision.dataset.CIFAR10(
-        root = 'datasets/', 
+        root = data_dir, 
         train = True, 
         download=True, 
         transform=transformations)
     
     test_dataset = torchvision.dataset.CIFAR10(
-        root = 'datasets/', 
+        root = data_dir, 
         train = False, 
         download=True, 
         transform=test_transforms)
