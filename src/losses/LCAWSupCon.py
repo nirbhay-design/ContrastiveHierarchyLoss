@@ -14,7 +14,7 @@ class LCAWSupConLoss(nn.Module):
         sim_mat = self.calculate_sim_matrix(features)
         # division by temperature
         sim_mat = F.log_softmax(sim_mat / self.tau, dim = -1)
-        # sim_mat.fill_diagonal_(torch.tensor(0.0))
+        sim_mat.fill_diagonal_(torch.tensor(0.0))
         # calculating pair wise equal labels for pos pairs
         labels = labels.unsqueeze(1)
         labels_mask = (labels == labels.T).type(torch.float32)
