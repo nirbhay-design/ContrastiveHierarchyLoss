@@ -73,7 +73,7 @@ def train(model, train_loader, test_loader, lossfunction, optimizer, eval_every,
         
         if eval_every % (epochs + 1) == 0:
             cur_test_acc = evaluate(model, test_loader, device, return_logs)
-            print(f"Test Accuracy at {epochs}: {cur_test_acc}")
+            print(f"Test Accuracy at epoch: {epochs + 1}: {cur_test_acc}")
       
         tval['trainacc'].append(float(curacc))
         tval['trainloss'].append(float(cur_loss))
@@ -96,9 +96,9 @@ if __name__ == "__main__":
     loss = LCAConClsLoss(sim = 'cosine', tau = 1.0)
     train_dl, test_dl = CIFAR_dataloader(data_dir="datasets/cifar10")
 
-    return_logs = True
+    return_logs = False
     eval_every = 5
-    n_epochs = 1
+    n_epochs = 100
     device = torch.device("cuda:0")
 
     train(

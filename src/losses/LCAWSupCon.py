@@ -14,7 +14,8 @@ class LCAWSupConLoss(nn.Module):
         # calculate pair wise similarity 
         sim_mat = self.calculate_sim_matrix(features)
         # division by temperature
-        sim_mat = F.log_softmax(sim_mat / self.tau, dim = -1)  
+        sim_mat = F.log_softmax(sim_mat / self.tau, dim = -1) 
+        sim_mat = sim_mat.clone().fill_diagonal_(torch.tensor(0.0))
         # calculating pair wise equal labels for pos pairs
         labels = labels.unsqueeze(1)
         labels_mask = (labels == labels.T).type(torch.float32)
@@ -28,7 +29,7 @@ class LCAWSupConLoss(nn.Module):
         # averaging out the log_softmax value, epsilon = 1e-5 is to avoid division by zero
         pos_pairs_avg = torch.div(pos_pair_sum, num_pos + 1e-5)
         # final loss over all features in batch
-        loss = -pos_pairs_avg.sum()
+        loss = -pos_pairs_avg.sum() / B
         return loss
 
     def calculate_sim_matrix(self, features):
