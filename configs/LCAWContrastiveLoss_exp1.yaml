@@ -1,6 +1,6 @@
 SEED: 42
 num_classes: 608
-lr: !!float 1e-4
+lr: !!float 1e-3
 hierarchy_path: src/dataset/hierarchy_pkl
 idx_to_cls_path: src/dataset/hierarchy_pkl/tieredimg_idx_to_cls.pkl
 dataset_name: tiered-imagenet-224
@@ -8,7 +8,7 @@ data_dir: /workspace/DATASETS/tiered-imagenet/tiered_imagenet
 batch_size: 256 
 num_workers: 2
 image_size: [84,84]
-return_logs: False
+return_logs: True
 eval_every: 5
 n_epochs: 100
 gpu_id: 0

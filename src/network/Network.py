@@ -5,12 +5,13 @@ import torch.nn as nn
 class Network(nn.Module):
     def __init__(self, num_classes):
         super().__init__()
-        model = torchvision.models.resnet18(num_classes=num_classes)
+        model = torchvision.models.resnet18(weights=torchvision.models.ResNet18_Weights)
         module_keys = list(model._modules.keys())
         self.feat_extractor = nn.Sequential()
         for key in module_keys[:-1]:
             self.feat_extractor.add_module(key, model._modules.get(key, nn.Identity()))
-        self.classifier = model._modules.get(module_keys[-1], nn.Identity())
+        resnet_classifier = model._modules.get(module_keys[-1], nn.Identity())
+        self.classifier = nn.Linear(in_features = resnet_classifier.in_features, out_features = num_classes)
 
     def forward(self, x):
         features = self.feat_extractor(x).flatten(1)
