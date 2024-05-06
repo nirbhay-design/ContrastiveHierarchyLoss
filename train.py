@@ -93,11 +93,14 @@ if __name__ == "__main__":
     
     model = Network(num_classes=608)
     optimizer = optim.Adam(model.parameters(), lr = 1e-3)
-    loss = LCAConClsLoss(
-        "src/dataset/hierarchy_pkl", 
-        "src/dataset/hierarchy_pkl/tieredimg_idx_to_cls.pkl", 
-        sim = 'mse', tau = 1.0)
-    train_dl, test_dl = TieredImagenetDataLoader(data_dir="/workspace/DATASETS/tiered-imagenet/tiered_imagenet")
+    loss = LCAConClsLoss( 
+        sim = 'mse', tau = 1.0,
+        hierarchy_dist_path = "src/dataset/hierarchy_pkl", 
+        idx_to_cls_path = "src/dataset/hierarchy_pkl/tieredimg_idx_to_cls.pkl", 
+        dataset_name = "tiered-imagenet-224")
+    train_dl, test_dl = TieredImagenetDataLoader(
+        data_dir="/workspace/DATASETS/tiered-imagenet/tiered_imagenet",
+        image_size = (84,84))
 
     return_logs = False
     eval_every = 5

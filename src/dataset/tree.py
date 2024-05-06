@@ -16,7 +16,7 @@ class DistanceDict(dict):
 
     def __getitem__(self, i):
         if i[0] == i[1]:
-            return 0
+            return 1
         else:
             return self.distances[(i[0], i[1]) if i[0] < i[1] else (i[1], i[0])]
 

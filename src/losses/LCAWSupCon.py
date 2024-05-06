@@ -6,12 +6,17 @@ from src.dataset.tree import load_distances
 import pickle
 
 class LCAWSupConLoss(nn.Module):
-    def __init__(self, hierarchy_dist_path, idx_to_cls_path, sim = 'cosine', tau = 1.0):
+    def __init__(self, 
+                 hierarchy_dist_path, 
+                 idx_to_cls_path, 
+                 dataset_name = "tiered-imagenet-224", 
+                 sim = 'cosine', 
+                 tau = 1.0):
         super().__init__()
         self.tau = tau
         self.sim = sim 
 
-        self.h_dist = load_distances("tiered-imagenet-224", "ilsvrc", hierarchy_dist_path)
+        self.h_dist = load_distances(dataset_name, "ilsvrc", hierarchy_dist_path)
         with open(idx_to_cls_path, "rb") as f:
             self.idx_to_class = pickle.load(f)
 
@@ -61,12 +66,12 @@ class LCAWSupConLoss(nn.Module):
         return lca_wt_mask
         
 class LCAConClsLoss(nn.Module):
-    def __init__(self, hierarchy_dist_path, idx_to_cls_path, sim = 'cosine', tau = 1.0):
+    def __init__(self, sim = 'cosine', tau = 1.0, **kwargs):
         super().__init__()
         self.tau = tau
         self.sim = sim 
         self.ce = nn.CrossEntropyLoss()
-        self.lcasupcon = LCAWSupConLoss(hierarchy_dist_path, idx_to_cls_path, sim, tau)
+        self.lcasupcon = LCAWSupConLoss(sim = sim, tau = tau, **kwargs)
     
     def forward(self, features, scores, labels):
         return self.lcasupcon(features, labels) + self.ce(scores, labels)

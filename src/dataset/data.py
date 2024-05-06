@@ -7,10 +7,11 @@ from PIL import Image
 import pickle 
 
 class TieredImagenet():
-    def __init__(self, data_path, transformations):
+    def __init__(self, data_path, transformations, train=True):
         # https://www.kaggle.com/datasets/arjun2000ashok/tieredimagenet
         # data is split given in three directories train -> 351 classes, val -> 97, test -> 160
         classes_list = []
+        self.class_map_images = {}
         self.images = []
         sub_paths = ["train", "val", "test"]
         for path in sub_paths:
@@ -21,13 +22,31 @@ class TieredImagenet():
             for cur_class, class_path in zip(classes_, classes_path):
                 images_ = os.listdir(class_path)
                 images_path = list(map(lambda x: os.path.join(class_path, x), images_))
-                self.images.extend(list(zip(images_path, [cur_class for _ in range(len(images_path))])))
+                self.class_map_images[cur_class] = images_path
 
         self.cls_to_idx = dict(zip(classes_list, range(len(classes_list))))
         self.idx_to_cls = {j:i for i,j in self.cls_to_idx.items()}
 
-        with open("src/dataset/hierarchy_pkl/tieredimg_idx_to_cls.pkl", "wb") as f:
-            pickle.dump(self.idx_to_cls, f)
+        idx_to_cls_path = "src/dataset/hierarchy_pkl/tieredimg_idx_to_cls.pkl"
+        if not os.path.exists(idx_to_cls_path):
+            with open(idx_to_cls_path, "wb") as f:
+                pickle.dump(self.idx_to_cls, f)
+        else:
+            print(f"Path Already Exists: {idx_to_cls_path}")
+
+        self.per_class_train_test = {}
+        for class_id, images_path_list in self.class_map_images.items():
+            len_images = len(images_path_list)
+            num_test = int(0.2 * len_images)
+            num_train = len_images - num_test 
+            self.per_class_train_test[class_id] = (num_train, num_test)
+
+        for class_id, images_path in self.class_map_images.items():
+            if train:
+                images_path = images_path[0:self.per_class_train_test[class_id][0]]
+            else:
+                images_path = images_path[-self.per_class_train_test[class_id][1]:]
+            self.images.extend([(ip, class_id) for ip in images_path])
 
         self.transformations = transformations
 
@@ -41,43 +60,48 @@ class TieredImagenet():
         int_class = self.cls_to_idx[str_class]
         return img, int_class
     
-def TieredImagenetDataLoader(data_dir):
-    transformations = transforms.Compose([
+def TieredImagenetDataLoader(data_dir, image_size, **kwargs):
+    train_transforms = transforms.Compose([
+        transforms.Resize(image_size),
         transforms.RandomHorizontalFlip(0.6),
+        transforms.RandomApply([
+            transforms.ColorJitter(0.4, 0.4, 0.4, 0.1)
+        ], p=0.8),
         transforms.ToTensor(),
         transforms.Normalize([0.5,0.5,0.5],[0.5,0.5,0.5])
     ])
 
     test_transforms = transforms.Compose([
+        transforms.Resize(image_size),
         transforms.ToTensor(),
         transforms.Normalize([0.5,0.5,0.5], [0.5,0.5,0.5])
     ])
 
-    dataset = TieredImagenet(
+    train_dataset = TieredImagenet(
         data_dir, 
-        test_transforms)
-
-    len_data = len(dataset)
-    len_test_data = int(0.1 * len_data)
-    remaining_data = len_data - len_test_data
-    print(f"# of Training points: {remaining_data}\n# of Testing points: {len_test_data}")
-
-    train_dataset, test_dataset = torch.utils.data.random_split(dataset, [remaining_data, len_test_data])
+        train_transforms,
+        train=True)
+    
+    test_dataset = TieredImagenet(
+        data_dir, 
+        test_transforms,
+        train=False
+    )
 
     train_dl = torch.utils.data.DataLoader(
         train_dataset,
-        batch_size = 256,
+        batch_size = kwargs['Batch_Size'],
         shuffle=True,
         pin_memory=True,
-        num_workers = 0
+        num_workers = kwargs['num_workers']
     )
 
     test_dl = torch.utils.data.DataLoader(
         test_dataset,
-        batch_size = 256,
+        batch_size = 32,
         shuffle=True,
         pin_memory=True,
-        num_workers=0
+        num_workers= kwargs['num_workers']
     )
 
     return train_dl, test_dl
