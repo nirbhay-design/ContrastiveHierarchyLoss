@@ -1,6 +1,6 @@
 from src.losses.LCAWSupCon import LCAConClsLoss
 from src.network.Network import Network
-from src.dataset.data import CIFAR_dataloader
+from src.dataset.data import TieredImagenetDataLoader
 import torch 
 import torch.nn as nn 
 import torch.nn.functional as F 
@@ -69,7 +69,7 @@ def train(model, train_loader, test_loader, lossfunction, optimizer, eval_every,
             curacc += correct / (samples * len_train)
             
             if return_logs:
-                progress(idx+1,len(train_loader))
+                progress(idx+1,len(train_loader), loss=loss.item())
         
         if epochs % eval_every == 0:
             cur_test_acc = evaluate(model, test_loader, device, return_logs)
@@ -91,10 +91,13 @@ if __name__ == "__main__":
     torch.backends.cuda.matmul.allow_tf32 = True
     torch.backends.cudnn.allow_tf32 = True
     
-    model = Network(num_classes=10)
-    optimizer = optim.SGD(model.parameters(), lr = 1e-3, momentum=0.9)
-    loss = LCAConClsLoss(sim = 'mse', tau = 1.0)
-    train_dl, test_dl = CIFAR_dataloader(data_dir="datasets/cifar10")
+    model = Network(num_classes=608)
+    optimizer = optim.Adam(model.parameters(), lr = 1e-3)
+    loss = LCAConClsLoss(
+        "src/dataset/hierarchy_pkl", 
+        "src/dataset/hierarchy_pkl/tieredimg_idx_to_cls.pkl", 
+        sim = 'mse', tau = 1.0)
+    train_dl, test_dl = TieredImagenetDataLoader(data_dir="/workspace/DATASETS/tiered-imagenet/tiered_imagenet")
 
     return_logs = False
     eval_every = 5

@@ -6,6 +6,25 @@ from math import exp, fsum
 from nltk.tree import Tree
 from copy import deepcopy
 
+class DistanceDict(dict):
+    """
+    Small helper class implementing a symmetrical dictionary to hold distance data.
+    """
+
+    def __init__(self, distances):
+        self.distances = {tuple(sorted(t)): v for t, v in distances.items()}
+
+    def __getitem__(self, i):
+        if i[0] == i[1]:
+            return 0
+        else:
+            return self.distances[(i[0], i[1]) if i[0] < i[1] else (i[1], i[0])]
+
+    def __setitem__(self, i):
+        raise NotImplementedError()
+    
+    def __str__(self):
+        return str(self.distances)
 
 def get_label(node):
     if isinstance(node, Tree):
@@ -62,9 +81,9 @@ def load_distances(dataset, dist_type, data_dir):
         dataset = "inaturalist19"
 
     with lzma.open(os.path.join(data_dir, "{}_{}_distances.pkl.xz".format(dataset, dist_type).replace("-", "_")), "rb") as f:
-        return pickle.load(f)
+        return DistanceDict(pickle.load(f))
 
 if __name__ == "__main__":
 
-    data_dist = load_distances("tiered-imagenet-224", "ilsvrc", "hierarchy_pkl")
+    data_dist = load_distances("tiered-imagenet-224", "ilsvrc", "src/dataset/hierarchy_pkl")
     print(data_dist)

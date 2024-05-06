@@ -2,19 +2,27 @@ import torch
 import torchvision
 import torch.nn as nn 
 import torch.nn.functional as F 
+from src.dataset.tree import load_distances
+import pickle
 
 class LCAWSupConLoss(nn.Module):
-    def __init__(self, sim = 'cosine', tau = 1.0):
+    def __init__(self, hierarchy_dist_path, idx_to_cls_path, sim = 'cosine', tau = 1.0):
         super().__init__()
         self.tau = tau
         self.sim = sim 
+
+        self.h_dist = load_distances("tiered-imagenet-224", "ilsvrc", hierarchy_dist_path)
+        with open(idx_to_cls_path, "rb") as f:
+            self.idx_to_class = pickle.load(f)
 
     def forward(self, features, labels):
         B, _ = features.shape
         # calculate pair wise similarity 
         sim_mat = self.calculate_sim_matrix(features)
+        # calculating lca weighted mask
+        lca_wt_mask = self.calculate_lca_weight_mask(labels)
         # division by temperature
-        sim_mat = F.log_softmax(sim_mat / self.tau, dim = -1) 
+        sim_mat = F.log_softmax(sim_mat * lca_wt_mask / self.tau, dim = -1) 
         sim_mat = sim_mat.clone().fill_diagonal_(torch.tensor(0.0))
         # calculating pair wise equal labels for pos pairs
         labels = labels.unsqueeze(1)
@@ -43,13 +51,22 @@ class LCAWSupConLoss(nn.Module):
         sim_mat.fill_diagonal_(-torch.tensor(torch.inf))
         return sim_mat 
     
+    def calculate_lca_weight_mask(self, labels):
+        B = labels.shape[0]
+        lca_wt_mask = torch.ones((B,B), dtype=torch.float32, device=labels.device)
+        for idx, i in enumerate(labels):
+            for jdx, j in enumerate(labels):
+                if idx != jdx:
+                    lca_wt_mask[idx,jdx] = self.h_dist[(self.idx_to_class[i.item()], self.idx_to_class[j.item()])]
+        return lca_wt_mask
+        
 class LCAConClsLoss(nn.Module):
-    def __init__(self, sim = 'cosine', tau = 1.0):
+    def __init__(self, hierarchy_dist_path, idx_to_cls_path, sim = 'cosine', tau = 1.0):
         super().__init__()
         self.tau = tau
         self.sim = sim 
         self.ce = nn.CrossEntropyLoss()
-        self.lcasupcon = LCAWSupConLoss(sim, tau)
+        self.lcasupcon = LCAWSupConLoss(hierarchy_dist_path, idx_to_cls_path, sim, tau)
     
     def forward(self, features, scores, labels):
         return self.lcasupcon(features, labels) + self.ce(scores, labels)
@@ -143,8 +160,14 @@ if __name__ == "__main__":
     x1 = torch.rand(4,5)
     x2 = torch.rand(4,5)
     labels = torch.tensor([1,2,3,1])
-    lcswsupcon = LCAWSupConLoss(sim = 'cosine')
-    lcssupcon_mse = LCAWSupConLoss(sim = 'mse')
+    lcswsupcon = LCAWSupConLoss(
+        "src/dataset/hierarchy_pkl", 
+        "src/dataset/hierarchy_pkl/tieredimg_idx_to_cls.pkl", 
+        sim = 'cosine')
+    lcssupcon_mse = LCAWSupConLoss(
+        "src/dataset/hierarchy_pkl", 
+        "src/dataset/hierarchy_pkl/tieredimg_idx_to_cls.pkl",
+        sim = 'mse')
     supcon = SupConLoss(temperature = 1.0, base_temperature=1.0)
     print(lcswsupcon(x1, labels))
     print(lcssupcon_mse(x1, labels))

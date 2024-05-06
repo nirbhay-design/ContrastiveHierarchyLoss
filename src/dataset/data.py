@@ -2,10 +2,12 @@ import torch
 import torchvision 
 import torchvision.transforms as transforms
 import os 
-from tree import load_distances
+from src.dataset.tree import load_distances
+from PIL import Image
+import pickle 
 
 class TieredImagenet():
-    def __init__(self, data_path, hierarchy_dist_path):
+    def __init__(self, data_path, transformations):
         # https://www.kaggle.com/datasets/arjun2000ashok/tieredimagenet
         # data is split given in three directories train -> 351 classes, val -> 97, test -> 160
         classes_list = []
@@ -24,10 +26,22 @@ class TieredImagenet():
         self.cls_to_idx = dict(zip(classes_list, range(len(classes_list))))
         self.idx_to_cls = {j:i for i,j in self.cls_to_idx.items()}
 
-        h_dist = load_distances("tiered-imagenet-224", "ilsvrc", hierarchy_dist_path)
-        print(h_dist[(classes_list[1], classes_list[0])])
+        with open("src/dataset/hierarchy_pkl/tieredimg_idx_to_cls.pkl", "wb") as f:
+            pickle.dump(self.idx_to_cls, f)
 
-def CIFAR_dataloader(data_dir):
+        self.transformations = transformations
+
+    def __len__(self):
+        return len(self.images)
+    
+    def __getitem__(self, idx):
+        image_path, str_class = self.images[idx]
+        img = Image.open(image_path).convert("RGB")
+        img = self.transformations(img)
+        int_class = self.cls_to_idx[str_class]
+        return img, int_class
+    
+def TieredImagenetDataLoader(data_dir):
     transformations = transforms.Compose([
         transforms.RandomHorizontalFlip(0.6),
         transforms.ToTensor(),
@@ -39,36 +53,41 @@ def CIFAR_dataloader(data_dir):
         transforms.Normalize([0.5,0.5,0.5], [0.5,0.5,0.5])
     ])
 
-    dataset = torchvision.datasets.CIFAR10(
-        root = data_dir, 
-        train = True, 
-        download=True, 
-        transform=transformations)
-    
-    test_dataset = torchvision.datasets.CIFAR10(
-        root = data_dir, 
-        train = False, 
-        download=True, 
-        transform=test_transforms)
-    
+    dataset = TieredImagenet(
+        data_dir, 
+        test_transforms)
+
+    len_data = len(dataset)
+    len_test_data = int(0.1 * len_data)
+    remaining_data = len_data - len_test_data
+    print(f"# of Training points: {remaining_data}\n# of Testing points: {len_test_data}")
+
+    train_dataset, test_dataset = torch.utils.data.random_split(dataset, [remaining_data, len_test_data])
 
     train_dl = torch.utils.data.DataLoader(
-        dataset,
-        batch_size = 128,
+        train_dataset,
+        batch_size = 256,
         shuffle=True,
         pin_memory=True,
-        num_workers = 4
+        num_workers = 0
     )
 
     test_dl = torch.utils.data.DataLoader(
         test_dataset,
-        batch_size = 128,
+        batch_size = 256,
         shuffle=True,
         pin_memory=True,
-        num_workers=4
+        num_workers=0
     )
 
-    return train_dl, test_dl    
+    return train_dl, test_dl
 
 if __name__ == "__main__":
-    ti = TieredImagenet("/workspace/DATASETS/tiered-imagenet/tiered_imagenet", "src/dataset/hierarchy_pkl")
+    transformations = transforms.Compose([
+        transforms.RandomHorizontalFlip(0.6),
+        transforms.ToTensor(),
+        transforms.Normalize([0.5,0.5,0.5],[0.5,0.5,0.5])
+    ])
+    ti = TieredImagenet("/workspace/DATASETS/tiered-imagenet/tiered_imagenet", transformations)
+    img, label = ti[0]
+    print(img.shape, label)
