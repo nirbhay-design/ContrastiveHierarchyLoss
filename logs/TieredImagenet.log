@@ -1,2 +1,24 @@
+environment: 
+YAML: configs/LCAWContrastiveLoss_exp1.yaml
+==> SEED: 42
+==> num_classes: 608
+==> lr: 0.0001
+==> hierarchy_path: src/dataset/hierarchy_pkl
+==> idx_to_cls_path: src/dataset/hierarchy_pkl/tieredimg_idx_to_cls.pkl
+==> dataset_name: tiered-imagenet-224
+==> data_dir: /workspace/DATASETS/tiered-imagenet/tiered_imagenet
+==> batch_size: 256
+==> num_workers: 2
+==> image_size: [84, 84]
+==> return_logs: False
+==> eval_every: 5
+==> n_epochs: 100
+==> gpu_id: 0
+Path Already Exists: src/dataset/hierarchy_pkl/tieredimg_idx_to_cls.pkl
+Path Already Exists: src/dataset/hierarchy_pkl/tieredimg_idx_to_cls.pkl
+# of Training Images: 623359
+# of Testing Images: 155806
 /opt/conda/envs/pytorch/lib/python3.10/site-packages/torch/nn/modules/conv.py:456: UserWarning: Plan failed with a cudnnException: CUDNN_BACKEND_EXECUTION_PLAN_DESCRIPTOR: cudnnFinalize Descriptor Failed cudnn_status: CUDNN_STATUS_NOT_SUPPORTED (Triggered internally at ../aten/src/ATen/native/cudnn/Conv_v8.cpp:919.)
   return F.conv2d(input, weight, bias, self.stride,
+/opt/conda/envs/pytorch/lib/python3.10/site-packages/torch/autograd/graph.py:744: UserWarning: Plan failed with a cudnnException: CUDNN_BACKEND_EXECUTION_PLAN_DESCRIPTOR: cudnnFinalize Descriptor Failed cudnn_status: CUDNN_STATUS_NOT_SUPPORTED (Triggered internally at ../aten/src/ATen/native/cudnn/Conv_v8.cpp:919.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass

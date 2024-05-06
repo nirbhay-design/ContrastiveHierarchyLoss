@@ -90,7 +90,7 @@ def TieredImagenetDataLoader(data_dir, image_size, **kwargs):
 
     train_dl = torch.utils.data.DataLoader(
         train_dataset,
-        batch_size = kwargs['Batch_Size'],
+        batch_size = kwargs['batch_size'],
         shuffle=True,
         pin_memory=True,
         num_workers = kwargs['num_workers']
@@ -104,7 +104,7 @@ def TieredImagenetDataLoader(data_dir, image_size, **kwargs):
         num_workers= kwargs['num_workers']
     )
 
-    return train_dl, test_dl
+    return train_dl, test_dl, train_dataset, test_dataset
 
 if __name__ == "__main__":
     transformations = transforms.Compose([

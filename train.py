@@ -6,6 +6,14 @@ import torch.nn as nn
 import torch.nn.functional as F 
 import torchvision 
 import torch.optim as optim 
+import yaml, sys, random, numpy as np
+from yaml.loader import SafeLoader
+
+def yaml_loader(yaml_file):
+    with open(yaml_file,'r') as f:
+        config_data = yaml.load(f,Loader=SafeLoader)
+    
+    return config_data
 
 def progress(current, total, **kwargs):
     progress_percent = (current * 50 / total)
@@ -86,26 +94,44 @@ def train(model, train_loader, test_loader, lossfunction, optimizer, eval_every,
     return model, tval
 
 if __name__ == "__main__":
+    config = yaml_loader(sys.argv[1])
+    
+    random.seed(config["SEED"])
+    np.random.seed(config["SEED"])
+    torch.manual_seed(config["SEED"])
+    torch.cuda.manual_seed(config["SEED"])
     torch.backends.cudnn.benchmarks = True
     torch.backends.cudnn.deterministic = True
     torch.backends.cuda.matmul.allow_tf32 = True
     torch.backends.cudnn.allow_tf32 = True
     
-    model = Network(num_classes=608)
-    optimizer = optim.Adam(model.parameters(), lr = 1e-3)
+    print("environment: ")
+    print(f"YAML: {sys.argv[1]}")
+    for key, value in config.items():
+        print(f"==> {key}: {value}")
+    
+    model = Network(num_classes=config['num_classes'])
+    optimizer = optim.Adam(model.parameters(), lr = config['lr'])
     loss = LCAConClsLoss( 
-        sim = 'mse', tau = 1.0,
-        hierarchy_dist_path = "src/dataset/hierarchy_pkl", 
-        idx_to_cls_path = "src/dataset/hierarchy_pkl/tieredimg_idx_to_cls.pkl", 
-        dataset_name = "tiered-imagenet-224")
-    train_dl, test_dl = TieredImagenetDataLoader(
-        data_dir="/workspace/DATASETS/tiered-imagenet/tiered_imagenet",
-        image_size = (84,84))
+        sim = 'cosine', tau = 1.0,
+        hierarchy_dist_path = config['hierarchy_path'], 
+        idx_to_cls_path = config["idx_to_cls_path"], 
+        dataset_name = config['dataset_name'])
+    
+    train_dl, test_dl, train_ds, test_ds = TieredImagenetDataLoader(
+        data_dir=config['data_dir'],
+        image_size = config['image_size'],
+        batch_size = config['batch_size'],
+        num_workers=config['num_workers'])
+    
+    print(f"# of Training Images: {len(train_ds)}")
+    print(f"# of Testing Images: {len(test_ds)}")
 
-    return_logs = False
-    eval_every = 5
-    n_epochs = 100
-    device = torch.device("cuda:0")
+
+    return_logs = config['return_logs']
+    eval_every = config['eval_every']
+    n_epochs = config['n_epochs']
+    device = torch.device(f"cuda:{config['gpu_id']}")
 
     train(
         model,
