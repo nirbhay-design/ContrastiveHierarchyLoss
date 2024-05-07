@@ -93,6 +93,13 @@ def train(model, train_loader, test_loader, lossfunction, optimizer, eval_every,
 
     return model, tval
 
+def loss_function(loss_type = 'lcacon', **kwargs):
+    if loss_type == 'lcacon':
+        return LCAConClsLoss(**kwargs)
+    else:
+        print("{loss_type} Loss is Not Supported")
+        return None 
+
 if __name__ == "__main__":
     config = yaml_loader(sys.argv[1])
     
@@ -112,11 +119,8 @@ if __name__ == "__main__":
     
     model = Network(num_classes=config['num_classes'])
     optimizer = optim.Adam(model.parameters(), lr = config['lr'])
-    loss = LCAConClsLoss( 
-        sim = 'cosine', tau = 1.0,
-        hierarchy_dist_path = config['hierarchy_path'], 
-        idx_to_cls_path = config["idx_to_cls_path"], 
-        dataset_name = config['dataset_name'])
+
+    loss = loss_function(loss_type = config['loss'], **config.get('loss_params', {}))
     
     train_dl, test_dl, train_ds, test_ds = TieredImagenetDataLoader(
         data_dir=config['data_dir'],
