@@ -64,9 +64,11 @@ def TieredImagenetDataLoader(data_dir, image_size, **kwargs):
     train_transforms = transforms.Compose([
         transforms.Resize(image_size),
         transforms.RandomHorizontalFlip(0.6),
+        transforms.AugMix(),
         transforms.RandomApply([
             transforms.ColorJitter(0.4, 0.4, 0.4, 0.1)
         ], p=0.8),
+        transforms.RandomGrayscale(p=0.2),
         transforms.ToTensor(),
         transforms.Normalize([0.5,0.5,0.5],[0.5,0.5,0.5])
     ])

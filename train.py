@@ -99,6 +99,18 @@ def loss_function(loss_type = 'lcacon', **kwargs):
     else:
         print("{loss_type} Loss is Not Supported")
         return None 
+    
+def model_optimizer(model, opt_name, **opt_params):
+    print(f"using optimizer: {opt_name}")
+    if opt_name == "SGD":
+        return optim.SGD(model.parameters(), **opt_params)
+    elif opt_name == "ADAM":
+        return optim.Adam(model.parameters(), **opt_params)
+    elif opt_name == "AdamW":
+        return optim.AdamW(model.parameters(), **opt_params)
+    else:
+        print("{opt_name} not available")
+        return None
 
 if __name__ == "__main__":
     config = yaml_loader(sys.argv[1])
@@ -118,7 +130,8 @@ if __name__ == "__main__":
         print(f"==> {key}: {value}")
     
     model = Network(num_classes=config['num_classes'])
-    optimizer = optim.Adam(model.parameters(), lr = config['lr'])
+    optimizer = model_optimizer(model, config['opt_name'], **config['opt_params'])
+    print(optimizer)
 
     loss = loss_function(loss_type = config['loss'], **config.get('loss_params', {}))
     

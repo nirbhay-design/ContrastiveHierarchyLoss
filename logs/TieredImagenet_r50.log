@@ -1,20 +1,32 @@
-/opt/conda/envs/pytorch/lib/python3.10/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=ResNet50_Weights.IMAGENET1K_V1`. You can also use `weights=ResNet50_Weights.DEFAULT` to get the most up-to-date weights.
-  warnings.warn(msg)
 environment: 
 YAML: configs/LCAWContrastiveLoss_exp1.yaml
 ==> SEED: 42
 ==> num_classes: 608
-==> lr: 0.001
 ==> data_dir: /workspace/DATASETS/tiered-imagenet/tiered_imagenet
 ==> batch_size: 256
-==> num_workers: 2
+==> num_workers: 3
 ==> image_size: [84, 84]
-==> return_logs: True
+==> return_logs: False
 ==> eval_every: 5
 ==> n_epochs: 100
 ==> gpu_id: 1
+==> opt_name: SGD
+==> opt_params: {'lr': 0.001, 'momentum': 0.9}
 ==> loss: lcacon
-==> loss_params: {'sim': 'cosine', 'tau': 0.1, 'hierarchy_dist_path': 'src/dataset/hierarchy_pkl', 'idx_to_cls_path': 'src/dataset/hierarchy_pkl/tieredimg_idx_to_cls.pkl', 'dataset_name': 'tiered-imagenet-224'}
+==> loss_params: {'sim': 'cosine', 'tau': 0.9, 'hierarchy_dist_path': 'src/dataset/hierarchy_pkl', 'idx_to_cls_path': 'src/dataset/hierarchy_pkl/tieredimg_idx_to_cls.pkl', 'dataset_name': 'tiered-imagenet-224'}
+using optimizer: SGD
+SGD (
+Parameter Group 0
+    dampening: 0
+    differentiable: False
+    foreach: None
+    fused: None
+    lr: 0.001
+    maximize: False
+    momentum: 0.9
+    nesterov: False
+    weight_decay: 0
+)
 Path Already Exists: src/dataset/hierarchy_pkl/tieredimg_idx_to_cls.pkl
 Path Already Exists: src/dataset/hierarchy_pkl/tieredimg_idx_to_cls.pkl
 # of Training Images: 623359
