@@ -58,3 +58,13 @@ epochs: [16/100] train_acc: 0.747 train_loss: 2.810
 epochs: [17/100] train_acc: 0.752 train_loss: 2.786
 epochs: [18/100] train_acc: 0.756 train_loss: 2.761
 epochs: [19/100] train_acc: 0.761 train_loss: 2.735
+epochs: [20/100] train_acc: 0.765 train_loss: 2.723
+Test Accuracy at epoch: 20: 0.742
+epochs: [21/100] train_acc: 0.769 train_loss: 2.697
+epochs: [22/100] train_acc: 0.773 train_loss: 2.681
+epochs: [23/100] train_acc: 0.777 train_loss: 2.663
+epochs: [24/100] train_acc: 0.781 train_loss: 2.645
+epochs: [25/100] train_acc: 0.784 train_loss: 2.624
+Test Accuracy at epoch: 25: 0.741
+epochs: [26/100] train_acc: 0.788 train_loss: 2.606
+epochs: [27/100] train_acc: 0.791 train_loss: 2.585
