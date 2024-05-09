@@ -35,3 +35,26 @@ Path Already Exists: src/dataset/hierarchy_pkl/tieredimg_idx_to_cls.pkl
   return F.conv2d(input, weight, bias, self.stride,
 /opt/conda/envs/pytorch/lib/python3.10/site-packages/torch/autograd/graph.py:744: UserWarning: Plan failed with a cudnnException: CUDNN_BACKEND_EXECUTION_PLAN_DESCRIPTOR: cudnnFinalize Descriptor Failed cudnn_status: CUDNN_STATUS_NOT_SUPPORTED (Triggered internally at ../aten/src/ATen/native/cudnn/Conv_v8.cpp:919.)
   return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+Test Accuracy at epoch: 0: 0.665
+epochs: [1/100] train_acc: 0.404 train_loss: 5.361
+epochs: [2/100] train_acc: 0.607 train_loss: 3.620
+epochs: [3/100] train_acc: 0.638 train_loss: 3.419
+epochs: [4/100] train_acc: 0.656 train_loss: 3.297
+epochs: [5/100] train_acc: 0.670 train_loss: 3.221
+Test Accuracy at epoch: 5: 0.732
+epochs: [6/100] train_acc: 0.681 train_loss: 3.160
+epochs: [7/100] train_acc: 0.691 train_loss: 3.103
+epochs: [8/100] train_acc: 0.699 train_loss: 3.062
+epochs: [9/100] train_acc: 0.707 train_loss: 3.021
+epochs: [10/100] train_acc: 0.714 train_loss: 2.981
+Test Accuracy at epoch: 10: 0.738
+epochs: [11/100] train_acc: 0.720 train_loss: 2.955
+epochs: [12/100] train_acc: 0.726 train_loss: 2.916
+epochs: [13/100] train_acc: 0.731 train_loss: 2.890
+epochs: [14/100] train_acc: 0.738 train_loss: 2.851
+epochs: [15/100] train_acc: 0.742 train_loss: 2.830
+Test Accuracy at epoch: 15: 0.741
+epochs: [16/100] train_acc: 0.747 train_loss: 2.810
+epochs: [17/100] train_acc: 0.752 train_loss: 2.786
+epochs: [18/100] train_acc: 0.756 train_loss: 2.761
+epochs: [19/100] train_acc: 0.761 train_loss: 2.735
