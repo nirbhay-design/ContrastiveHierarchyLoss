@@ -113,3 +113,5 @@ epochs: [62/100] train_acc: 0.873 train_loss: 2.217
 epochs: [63/100] train_acc: 0.874 train_loss: 2.205
 epochs: [64/100] train_acc: 0.877 train_loss: 2.200
 epochs: [65/100] train_acc: 0.878 train_loss: 2.197
+Test Accuracy at epoch: 65: 0.722
+epochs: [66/100] train_acc: 0.879 train_loss: 2.184
