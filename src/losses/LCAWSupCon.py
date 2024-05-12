@@ -106,7 +106,7 @@ class LCAConClsLoss(nn.Module):
         self.lcasupcon = LCAWSupConLoss(sim = sim, tau = tau, **kwargs)
     
     def forward(self, features, scores, labels):
-        return self.lcasupcon(features, labels) + self.ce(scores, labels)
+        return self.lcasupcon(features, labels), self.ce(scores, labels)
 
 if __name__ == "__main__":
     x1 = torch.rand(4,5)

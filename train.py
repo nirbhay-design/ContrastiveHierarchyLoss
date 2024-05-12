@@ -1,5 +1,5 @@
 from src.losses.LCAWSupCon import LCAConClsLoss
-from src.network.Network import Network
+from src.network.Network import Network, MLP
 from src.dataset.data import TieredImagenetDataLoader
 import torch 
 import torch.nn as nn 
@@ -25,8 +25,9 @@ def progress(current, total, **kwargs):
     if (current == total):
         print()
 
-def evaluate(model, loader, device, return_logs=False):
+def evaluate(model, mlp, loader, device, return_logs=False):
     model.eval()
+    mlp.eval()
     correct = 0;samples =0
     with torch.no_grad():
         loader_len = len(loader)
@@ -35,7 +36,9 @@ def evaluate(model, loader, device, return_logs=False):
             y = y.to(device)
             # model = model.to(config.device)
 
-            _, scores = model(x)
+            feats, _ = model(x)
+            scores = mlp(feats)
+
             predict_prob = F.softmax(scores,dim=1)
             _,predictions = predict_prob.max(1)
 
@@ -46,30 +49,43 @@ def evaluate(model, loader, device, return_logs=False):
                 progress(idx+1,loader_len)
                 # print('batches done : ',idx,end='\r')
         accuracy = round(float(correct / samples), 3)
-    model.train()
     return accuracy 
 
-def train(model, train_loader, test_loader, lossfunction, optimizer, eval_every, n_epochs, device, return_logs=False): 
+def train(
+        model, mlp, train_loader,
+        test_loader, lossfunction, 
+        optimizer, mlp_optimizer, opt_lr_schedular, 
+        eval_every, n_epochs, device, return_logs=False): 
+    
     tval = {'trainacc':[],"trainloss":[]}
     model = model.to(device)
-    model.train()
+    mlp = mlp.to(device)
     for epochs in range(n_epochs):
+        model.train()
+        mlp.train()
         cur_loss = 0
         curacc = 0
+        cur_mlp_loss = 0
         len_train = len(train_loader)
         for idx , (data,target) in enumerate(train_loader):
             data = data.to(device)
             target = target.to(device)
             
-            feats, scores = model(data)
+            feats, proj_feat = model(data)
+            scores = mlp(feats.detach())            
             
-            loss = lossfunction(feats, scores, target)
+            loss_con, loss_sup = lossfunction(proj_feat, scores, target)
             
             optimizer.zero_grad()
-            loss.backward()
+            loss_con.backward()
             optimizer.step()
 
-            cur_loss += loss.item() / (len_train)
+            mlp_optimizer.zero_grad()
+            loss_sup.backward()
+            mlp_optimizer.step()
+
+            cur_loss += loss_con.item() / (len_train)
+            cur_mlp_loss += loss_sup.item() / (len_train)
             scores = F.softmax(scores,dim = 1)
             _,predicted = torch.max(scores,dim = 1)
             correct = (predicted == target).sum()
@@ -77,18 +93,20 @@ def train(model, train_loader, test_loader, lossfunction, optimizer, eval_every,
             curacc += correct / (samples * len_train)
             
             if return_logs:
-                progress(idx+1,len(train_loader), loss=loss.item())
+                progress(idx+1,len(train_loader), loss_con=loss_con.item(), loss_sup=loss_sup.item())
         
+        opt_lr_schedular.step()
+
         if epochs % eval_every == 0:
-            cur_test_acc = evaluate(model, test_loader, device, return_logs)
+            cur_test_acc = evaluate(model, mlp, test_loader, device, return_logs)
             print(f"Test Accuracy at epoch: {epochs}: {cur_test_acc}")
       
         tval['trainacc'].append(float(curacc))
         tval['trainloss'].append(float(cur_loss))
         
-        print(f"epochs: [{epochs+1}/{n_epochs}] train_acc: {curacc:.3f} train_loss: {cur_loss:.3f}")
+        print(f"epochs: [{epochs+1}/{n_epochs}] train_acc: {curacc:.3f} train_loss_con: {cur_loss:.3f} train_loss_sup: {cur_mlp_loss:.3f}")
     
-    final_test_acc = evaluate(model, test_loader, device, return_logs)
+    final_test_acc = evaluate(model, mlp, test_loader, device, return_logs)
     print(f"Final Test Accuracy: {final_test_acc}")
 
     return model, tval
@@ -123,15 +141,20 @@ if __name__ == "__main__":
     torch.backends.cudnn.deterministic = True
     torch.backends.cuda.matmul.allow_tf32 = True
     torch.backends.cudnn.allow_tf32 = True
-    
+
     print("environment: ")
     print(f"YAML: {sys.argv[1]}")
     for key, value in config.items():
         print(f"==> {key}: {value}")
     
-    model = Network(num_classes=config['num_classes'])
-    optimizer = model_optimizer(model, config['opt_name'], **config['opt_params'])
+    model = Network(**config['model_params'])
+    mlp = MLP(model.classifier_infeatures, config['num_classes'])
+
+    optimizer = model_optimizer(model, config['opt'], **config['opt_params'])
     print(optimizer)
+    mlp_optimizer = model_optimizer(mlp, config['mlp_opt'], **config['mlp_opt_params'])
+
+    opt_lr_schedular = optim.lr_scheduler.StepLR(optimizer, step_size=40, gamma=0.1)
 
     loss = loss_function(loss_type = config['loss'], **config.get('loss_params', {}))
     
@@ -152,10 +175,13 @@ if __name__ == "__main__":
 
     train(
         model,
+        mlp,
         train_dl,
         test_dl,
         loss,
         optimizer,
+        mlp_optimizer,
+        opt_lr_schedular,
         eval_every,
         n_epochs,
         device,
