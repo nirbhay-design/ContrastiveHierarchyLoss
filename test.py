@@ -12,13 +12,14 @@ lcswsupcon = LCAWSupConLoss(
     "src/dataset/hierarchy_pkl", 
     "src/dataset/hierarchy_pkl/tieredimg_idx_to_cls.pkl", 
     sim = 'cosine')
-# lcssupcon_mse = LCAWSupConLoss(
-#     "src/dataset/hierarchy_pkl", 
-#     "src/dataset/hierarchy_pkl/tieredimg_idx_to_cls.pkl",
-#     sim = 'mse')
+lcssupcon_mse = LCAWSupConLoss(
+    "src/dataset/hierarchy_pkl", 
+    "src/dataset/hierarchy_pkl/tieredimg_idx_to_cls.pkl",
+    sim = 'mse')
 # print(lcswsupcon(x1, labels))
-# print(lcssupcon_mse(x1, labels))
+print(lcssupcon_mse(x1, labels))
 
 supcon = SupConLoss()
-print(supcon(x1,labels))
+# print(supcon(x1,labels))
 print(lcswsupcon(x1, labels))
+

@@ -52,9 +52,9 @@ class LCAWSupConLoss(nn.Module):
         # calculate pair wise similarity 
         sim_mat = self.calculate_sim_matrix(features)
         # calculating lca weighted mask
-        # lca_wt_mask = self.calculate_lca_weight_mask(labels)
+        lca_wt_mask = self.calculate_lca_weight_mask(labels)
         # division by temperature
-        sim_mat = F.log_softmax(sim_mat / self.tau, dim = -1) 
+        sim_mat = F.log_softmax(sim_mat / self.tau + lca_wt_mask, dim = -1) 
         sim_mat = sim_mat.clone().fill_diagonal_(torch.tensor(0.0))
         # calculating pair wise equal labels for pos pairs
         labels = labels.unsqueeze(1)
@@ -85,13 +85,18 @@ class LCAWSupConLoss(nn.Module):
     
     def calculate_lca_weight_mask(self, labels):
         B = labels.shape[0]
-        lca_wt_mask = torch.ones((B,B), dtype=torch.float32, device=labels.device)
-        for idx, i in enumerate(labels):
-            for jdx, j in enumerate(labels):
-                if idx != jdx:
-                    lca_wt_mask[idx,jdx] = self.h_dist[(self.idx_to_class[i.item()], self.idx_to_class[j.item()])]
-        return lca_wt_mask
-        
+        t1 = labels.reshape(-1,1)
+        t2 = labels.reshape(1, -1)
+        t1 = t1.expand((B,B))
+        t2 = t2.expand((B,B))
+        pair_wise_labels = torch.cat([t1.unsqueeze(2), t2.unsqueeze(2)], dim = -1).cpu().reshape(-1,2)
+        labels_map = torch.tensor(list(map(
+            lambda x: float(self.h_dist[(self.idx_to_class[x[0].item()], self.idx_to_class[x[1].item()])]),
+            pair_wise_labels
+        )))
+        labels_mask = labels_map.reshape((B,B)).to(labels.device)
+        return labels_mask
+            
 class LCAConClsLoss(nn.Module):
     def __init__(self, sim = 'cosine', tau = 1.0, **kwargs):
         super().__init__()
