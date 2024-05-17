@@ -163,7 +163,8 @@ if __name__ == "__main__":
         data_dir=config['data_dir'],
         image_size = config['image_size'],
         batch_size = config['batch_size'],
-        num_workers=config['num_workers'])
+        num_workers=config['num_workers'],
+        distributed = config['distributed'])
     
     print(f"# of Training Images: {len(train_ds)}")
     print(f"# of Testing Images: {len(test_ds)}")
