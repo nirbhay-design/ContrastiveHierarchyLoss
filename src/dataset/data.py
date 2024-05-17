@@ -5,6 +5,7 @@ import os
 from src.dataset.tree import load_distances
 from PIL import Image
 import pickle 
+from torch.utils.data.distributed import DistributedSampler
 
 class TieredImagenet():
     def __init__(self, data_path, transformations, train=True):
@@ -79,6 +80,9 @@ def TieredImagenetDataLoader(data_dir, image_size, **kwargs):
         transforms.Normalize([0.5,0.5,0.5], [0.5,0.5,0.5])
     ])
 
+    distributed = kwargs['distributed']
+    num_workers = kwargs['num_workers']
+
     train_dataset = TieredImagenet(
         data_dir, 
         train_transforms,
@@ -93,9 +97,10 @@ def TieredImagenetDataLoader(data_dir, image_size, **kwargs):
     train_dl = torch.utils.data.DataLoader(
         train_dataset,
         batch_size = kwargs['batch_size'],
-        shuffle=True,
+        shuffle=False if distributed else True,
         pin_memory=True,
-        num_workers = kwargs['num_workers']
+        num_workers = num_workers,
+        sampler = DistributedSampler(train_dataset) if distributed else None 
     )
 
     test_dl = torch.utils.data.DataLoader(
@@ -103,7 +108,7 @@ def TieredImagenetDataLoader(data_dir, image_size, **kwargs):
         batch_size = 32,
         shuffle=True,
         pin_memory=True,
-        num_workers= kwargs['num_workers']
+        num_workers= num_workers
     )
 
     return train_dl, test_dl, train_dataset, test_dataset
