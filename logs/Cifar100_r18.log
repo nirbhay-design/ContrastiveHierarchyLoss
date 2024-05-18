@@ -38,3 +38,21 @@ Files already downloaded and verified
 Files already downloaded and verified
 # of Training Images: 50000
 # of Testing Images: 10000
+Test Accuracy at epoch: 0: 0.103
+epochs: [1/120] train_acc: 0.062 train_loss_con: 4.873 train_loss_sup: 4.219
+epochs: [2/120] train_acc: 0.148 train_loss_con: 4.635 train_loss_sup: 3.516
+epochs: [3/120] train_acc: 0.202 train_loss_con: 4.483 train_loss_sup: 3.202
+epochs: [4/120] train_acc: 0.239 train_loss_con: 4.377 train_loss_sup: 3.013
+epochs: [5/120] train_acc: 0.271 train_loss_con: 4.265 train_loss_sup: 2.855
+Test Accuracy at epoch: 5: 0.317
+epochs: [6/120] train_acc: 0.297 train_loss_con: 4.181 train_loss_sup: 2.729
+epochs: [7/120] train_acc: 0.316 train_loss_con: 4.099 train_loss_sup: 2.634
+epochs: [8/120] train_acc: 0.339 train_loss_con: 4.017 train_loss_sup: 2.531
+epochs: [9/120] train_acc: 0.353 train_loss_con: 3.969 train_loss_sup: 2.468
+epochs: [10/120] train_acc: 0.372 train_loss_con: 3.890 train_loss_sup: 2.385
+Test Accuracy at epoch: 10: 0.392
+epochs: [11/120] train_acc: 0.387 train_loss_con: 3.837 train_loss_sup: 2.315
+epochs: [12/120] train_acc: 0.401 train_loss_con: 3.768 train_loss_sup: 2.263
+epochs: [13/120] train_acc: 0.415 train_loss_con: 3.731 train_loss_sup: 2.201
+epochs: [14/120] train_acc: 0.426 train_loss_con: 3.679 train_loss_sup: 2.148
+epochs: [15/120] train_acc: 0.435 train_loss_con: 3.626 train_loss_sup: 2.112

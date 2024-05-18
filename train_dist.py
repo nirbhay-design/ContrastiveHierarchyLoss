@@ -1,13 +1,13 @@
-from src.losses.LCAWSupCon import LCAConClsLoss
+import sys, random
+import torch
+import torch.nn.functional as F
+import torch.optim as optim
+import numpy as np
 from src.network.Network import Network, MLP
-from src.dataset.data import TieredImagenetDataLoader
-import torch 
-import torch.nn as nn 
-import torch.nn.functional as F 
-import torchvision 
-import torch.optim as optim 
-import yaml, sys, random, numpy as np
-from yaml.loader import SafeLoader
+from train_utils import yaml_loader, progress, evaluate, \
+                        model_optimizer, \
+                        loss_function, \
+                        load_dataset
 
 import torch.multiprocessing as mp 
 from torch.nn.parallel import DistributedDataParallel as DDP 
@@ -18,48 +18,6 @@ def ddp_setup(rank, world_size):
     os.environ['MASTER_ADDR'] = 'localhost'
     os.environ['MASTER_PORT'] = "6707"
     init_process_group(backend = 'nccl', rank = rank, world_size = world_size)
-
-def yaml_loader(yaml_file):
-    with open(yaml_file,'r') as f:
-        config_data = yaml.load(f,Loader=SafeLoader)
-    
-    return config_data
-
-def progress(current, total, **kwargs):
-    progress_percent = (current * 50 / total)
-    progress_percent_int = int(progress_percent)
-    data_ = ""
-    for meter, data in kwargs.items():
-        data_ += f"{meter}: {round(data,2)}|"
-    print(f" |{chr(9608)* progress_percent_int}{' '*(50-progress_percent_int)}|{current}/{total}|{data_}",end='\r')
-    if (current == total):
-        print()
-
-def evaluate(model, mlp, loader, device, return_logs=False):
-    model.eval()
-    mlp.eval()
-    correct = 0;samples =0
-    with torch.no_grad():
-        loader_len = len(loader)
-        for idx,(x,y) in enumerate(loader):
-            x = x.to(device)
-            y = y.to(device)
-            # model = model.to(config.device)
-
-            feats, _ = model(x)
-            scores = mlp(feats)
-
-            predict_prob = F.softmax(scores,dim=1)
-            _,predictions = predict_prob.max(1)
-
-            correct += (predictions == y).sum()
-            samples += predictions.size(0)
-        
-            if return_logs:
-                progress(idx+1,loader_len)
-                # print('batches done : ',idx,end='\r')
-        accuracy = round(float(correct / samples), 3)
-    return accuracy 
 
 def train(
         model, mlp, train_loader,
@@ -123,25 +81,6 @@ def train(
 
     return model, tval
 
-def loss_function(loss_type = 'lcacon', **kwargs):
-    if loss_type == 'lcacon':
-        return LCAConClsLoss(**kwargs)
-    else:
-        print("{loss_type} Loss is Not Supported")
-        return None 
-    
-def model_optimizer(model, opt_name, **opt_params):
-    print(f"using optimizer: {opt_name}")
-    if opt_name == "SGD":
-        return optim.SGD(model.parameters(), **opt_params)
-    elif opt_name == "ADAM":
-        return optim.Adam(model.parameters(), **opt_params)
-    elif opt_name == "AdamW":
-        return optim.AdamW(model.parameters(), **opt_params)
-    else:
-        print("{opt_name} not available")
-        return None
-
 def main(rank, world_size, config):
 
     ddp_setup(rank, world_size)
@@ -162,7 +101,8 @@ def main(rank, world_size, config):
 
     loss = loss_function(loss_type = config['loss'], **config.get('loss_params', {}))
     
-    train_dl, test_dl, train_ds, test_ds = TieredImagenetDataLoader(
+    train_dl, test_dl, train_ds, test_ds = load_dataset(
+        dataset_name=config['data_name'],
         data_dir=config['data_dir'],
         image_size = config['image_size'],
         batch_size = config['batch_size'],
