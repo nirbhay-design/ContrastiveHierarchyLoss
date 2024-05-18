@@ -1,2 +1,20 @@
-/opt/conda/envs/pytorch/lib/python3.10/site-packages/torch/nn/modules/conv.py:456: UserWarning: Plan failed with a cudnnException: CUDNN_BACKEND_EXECUTION_PLAN_DESCRIPTOR: cudnnFinalize Descriptor Failed cudnn_status: CUDNN_STATUS_NOT_SUPPORTED (Triggered internally at ../aten/src/ATen/native/cudnn/Conv_v8.cpp:919.)
-  return F.conv2d(input, weight, bias, self.stride,
+environment: 
+YAML: configs/LCAWContrastiveLoss_exp1.yaml
+==> SEED: 42
+==> num_classes: 608
+==> data_name: tieredimagenet
+==> data_params: {'data_dir': '/workspace/DATASETS/imagenet', 'split_path': 'datasets_splits/splits_tieredImageNet-H', 'idx_to_cls_path': 'src/dataset/hierarchy_pkl/tieredimg_idx_to_cls.pkl', 'batch_size': 256, 'num_workers': 0, 'image_size': 224}
+==> return_logs: False
+==> eval_every: 5
+==> n_epochs: 120
+==> gpu_id: 0
+==> opt: SGD
+==> opt_params: {'lr': 0.1, 'momentum': 0.9}
+==> schedular_params: {'step_size': 40, 'gamma': 0.1}
+==> mlp_opt: SGD
+==> mlp_opt_params: {'lr': 0.01, 'momentum': 0.9}
+==> model_params: {'model_name': 'resnet18', 'pretrained': True, 'proj_dim': 128}
+==> loss: lcacon
+==> loss_params: {'sim': 'cosine', 'tau': 0.1, 'hierarchy_dist_path': 'src/dataset/hierarchy_pkl', 'idx_to_cls_path': 'src/dataset/hierarchy_pkl/tieredimg_idx_to_cls.pkl', 'dataset_name': 'tiered-imagenet-224'}
+==> distributed: True
+[W socket.cpp:697] [c10d] The client socket has failed to connect to [localhost]:4084 (errno: 99 - Cannot assign requested address).

@@ -38,7 +38,7 @@ if __name__ == "__main__":
     
     train_dl, test_dl, train_ds, test_ds = load_dataset(
         dataset_name = config['data_name'],
-        distributed = config['distributed'],
+        distributed = False,
         **config['data_params'])
     
     print(f"# of Training Images: {len(train_ds)}")

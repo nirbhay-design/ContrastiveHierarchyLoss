@@ -9,7 +9,7 @@ data_params:
 return_logs: False
 eval_every: 5
 n_epochs: 120
-gpu_id: 1
+gpu_id: 0
 opt: SGD
 opt_params:
   lr: !!float 1e-1
@@ -29,6 +29,6 @@ loss: supcon
 loss_params: 
   sim: 'cosine'
   tau: 0.1
-distributed: False
+distributed: True
 
   

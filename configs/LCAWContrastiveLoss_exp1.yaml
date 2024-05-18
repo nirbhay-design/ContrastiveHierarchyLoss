@@ -8,7 +8,7 @@ data_params:
   batch_size: 256
   num_workers: 0
   image_size: 224
-return_logs: True
+return_logs: False
 eval_every: 5
 n_epochs: 120
 gpu_id: 0
