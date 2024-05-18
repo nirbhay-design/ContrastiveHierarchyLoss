@@ -1,0 +1,40 @@
+environment: 
+YAML: configs/Supcon_c100.yaml
+==> SEED: 42
+==> num_classes: 100
+==> data_name: cifar100
+==> data_dir: datasets/cifar100
+==> batch_size: 256
+==> num_workers: 3
+==> image_size: [32, 32]
+==> return_logs: False
+==> eval_every: 5
+==> n_epochs: 120
+==> gpu_id: 1
+==> opt: SGD
+==> opt_params: {'lr': 0.1, 'momentum': 0.9}
+==> schedular_params: {'step_size': 40, 'gamma': 0.1}
+==> mlp_opt: SGD
+==> mlp_opt_params: {'lr': 0.001, 'momentum': 0.9}
+==> model_params: {'model_name': 'resnet18', 'pretrained': True, 'proj_dim': 128}
+==> loss: supcon
+==> loss_params: {'sim': 'cosine', 'tau': 0.1}
+==> distributed: False
+using optimizer: SGD
+SGD (
+Parameter Group 0
+    dampening: 0
+    differentiable: False
+    foreach: None
+    fused: None
+    lr: 0.1
+    maximize: False
+    momentum: 0.9
+    nesterov: False
+    weight_decay: 0
+)
+using optimizer: SGD
+Files already downloaded and verified
+Files already downloaded and verified
+# of Training Images: 50000
+# of Testing Images: 10000

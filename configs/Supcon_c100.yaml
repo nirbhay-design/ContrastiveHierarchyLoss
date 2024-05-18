@@ -1,14 +1,14 @@
 SEED: 42
-num_classes: 608
-data_name: tieredimagenet
-data_dir: /workspace/DATASETS/tiered-imagenet/tiered_imagenet
+num_classes: 100
+data_name: cifar100
+data_dir: datasets/cifar100
 batch_size: 256
-num_workers: 0
-image_size: [224,224]
-return_logs: True
+num_workers: 3
+image_size: [32,32]
+return_logs: False
 eval_every: 5
 n_epochs: 120
-gpu_id: 0
+gpu_id: 1
 opt: SGD
 opt_params:
   lr: !!float 1e-1
@@ -24,13 +24,10 @@ model_params:
   model_name: 'resnet18' 
   pretrained: True 
   proj_dim: 128
-loss: lcacon
+loss: supcon
 loss_params: 
   sim: 'cosine'
   tau: 0.1
-  hierarchy_dist_path: src/dataset/hierarchy_pkl
-  idx_to_cls_path: src/dataset/hierarchy_pkl/tieredimg_idx_to_cls.pkl
-  dataset_name: tiered-imagenet-224
 distributed: False
 
   

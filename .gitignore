@@ -5,3 +5,4 @@ __pycache__/
 *.safetensors
 *.ckpt 
 cifar10/
+cifar100/
