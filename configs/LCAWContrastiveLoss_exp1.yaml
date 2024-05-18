@@ -1,9 +1,9 @@
 SEED: 42
 num_classes: 608
 data_name: tieredimagenet
-data_dir: /workspace/DATASETS/tiered-imagenet/tiered_imagenet
+data_dir: /workspace/sharma59/DATASETS/tiered-imagenet/tiered_imagenet
 batch_size: 256
-num_workers: 0
+num_workers: 1
 image_size: [224,224]
 return_logs: True
 eval_every: 5
@@ -18,7 +18,7 @@ schedular_params:
   gamma: 0.1
 mlp_opt: SGD
 mlp_opt_params:
-  lr: !!float 1e-3
+  lr: !!float 1e-2
   momentum: 0.9
 model_params:
   model_name: 'resnet18' 
@@ -31,6 +31,6 @@ loss_params:
   hierarchy_dist_path: src/dataset/hierarchy_pkl
   idx_to_cls_path: src/dataset/hierarchy_pkl/tieredimg_idx_to_cls.pkl
   dataset_name: tiered-imagenet-224
-distributed: False
+distributed: True
 
   

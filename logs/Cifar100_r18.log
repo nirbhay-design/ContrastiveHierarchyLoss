@@ -59,3 +59,127 @@ epochs: [15/120] train_acc: 0.435 train_loss_con: 3.626 train_loss_sup: 2.112
 Test Accuracy at epoch: 15: 0.436
 epochs: [16/120] train_acc: 0.447 train_loss_con: 3.569 train_loss_sup: 2.048
 epochs: [17/120] train_acc: 0.460 train_loss_con: 3.527 train_loss_sup: 2.009
+epochs: [18/120] train_acc: 0.469 train_loss_con: 3.491 train_loss_sup: 1.973
+epochs: [19/120] train_acc: 0.478 train_loss_con: 3.459 train_loss_sup: 1.935
+epochs: [20/120] train_acc: 0.490 train_loss_con: 3.406 train_loss_sup: 1.883
+Test Accuracy at epoch: 20: 0.468
+epochs: [21/120] train_acc: 0.498 train_loss_con: 3.375 train_loss_sup: 1.856
+epochs: [22/120] train_acc: 0.506 train_loss_con: 3.328 train_loss_sup: 1.822
+epochs: [23/120] train_acc: 0.515 train_loss_con: 3.297 train_loss_sup: 1.792
+epochs: [24/120] train_acc: 0.520 train_loss_con: 3.264 train_loss_sup: 1.760
+epochs: [25/120] train_acc: 0.530 train_loss_con: 3.228 train_loss_sup: 1.731
+Test Accuracy at epoch: 25: 0.489
+epochs: [26/120] train_acc: 0.539 train_loss_con: 3.177 train_loss_sup: 1.689
+epochs: [27/120] train_acc: 0.546 train_loss_con: 3.143 train_loss_sup: 1.662
+epochs: [28/120] train_acc: 0.553 train_loss_con: 3.109 train_loss_sup: 1.627
+epochs: [29/120] train_acc: 0.562 train_loss_con: 3.062 train_loss_sup: 1.597
+epochs: [30/120] train_acc: 0.565 train_loss_con: 3.048 train_loss_sup: 1.576
+Test Accuracy at epoch: 30: 0.489
+epochs: [31/120] train_acc: 0.575 train_loss_con: 3.007 train_loss_sup: 1.547
+epochs: [32/120] train_acc: 0.581 train_loss_con: 2.970 train_loss_sup: 1.519
+epochs: [33/120] train_acc: 0.584 train_loss_con: 2.956 train_loss_sup: 1.500
+epochs: [34/120] train_acc: 0.597 train_loss_con: 2.903 train_loss_sup: 1.470
+epochs: [35/120] train_acc: 0.605 train_loss_con: 2.876 train_loss_sup: 1.430
+Test Accuracy at epoch: 35: 0.498
+epochs: [36/120] train_acc: 0.607 train_loss_con: 2.843 train_loss_sup: 1.419
+epochs: [37/120] train_acc: 0.612 train_loss_con: 2.827 train_loss_sup: 1.403
+epochs: [38/120] train_acc: 0.623 train_loss_con: 2.787 train_loss_sup: 1.359
+epochs: [39/120] train_acc: 0.627 train_loss_con: 2.760 train_loss_sup: 1.348
+epochs: [40/120] train_acc: 0.634 train_loss_con: 2.723 train_loss_sup: 1.320
+Test Accuracy at epoch: 40: 0.538
+epochs: [41/120] train_acc: 0.676 train_loss_con: 2.496 train_loss_sup: 1.145
+epochs: [42/120] train_acc: 0.696 train_loss_con: 2.375 train_loss_sup: 1.058
+epochs: [43/120] train_acc: 0.705 train_loss_con: 2.330 train_loss_sup: 1.024
+epochs: [44/120] train_acc: 0.712 train_loss_con: 2.294 train_loss_sup: 0.996
+epochs: [45/120] train_acc: 0.720 train_loss_con: 2.246 train_loss_sup: 0.965
+Test Accuracy at epoch: 45: 0.546
+epochs: [46/120] train_acc: 0.722 train_loss_con: 2.232 train_loss_sup: 0.956
+epochs: [47/120] train_acc: 0.727 train_loss_con: 2.218 train_loss_sup: 0.942
+epochs: [48/120] train_acc: 0.731 train_loss_con: 2.193 train_loss_sup: 0.919
+epochs: [49/120] train_acc: 0.738 train_loss_con: 2.163 train_loss_sup: 0.902
+epochs: [50/120] train_acc: 0.742 train_loss_con: 2.149 train_loss_sup: 0.885
+Test Accuracy at epoch: 50: 0.549
+epochs: [51/120] train_acc: 0.745 train_loss_con: 2.118 train_loss_sup: 0.870
+epochs: [52/120] train_acc: 0.749 train_loss_con: 2.111 train_loss_sup: 0.865
+epochs: [53/120] train_acc: 0.753 train_loss_con: 2.080 train_loss_sup: 0.844
+epochs: [54/120] train_acc: 0.758 train_loss_con: 2.056 train_loss_sup: 0.832
+epochs: [55/120] train_acc: 0.757 train_loss_con: 2.052 train_loss_sup: 0.825
+Test Accuracy at epoch: 55: 0.552
+epochs: [56/120] train_acc: 0.764 train_loss_con: 2.043 train_loss_sup: 0.808
+epochs: [57/120] train_acc: 0.765 train_loss_con: 2.031 train_loss_sup: 0.806
+epochs: [58/120] train_acc: 0.771 train_loss_con: 2.004 train_loss_sup: 0.786
+epochs: [59/120] train_acc: 0.773 train_loss_con: 1.991 train_loss_sup: 0.777
+epochs: [60/120] train_acc: 0.773 train_loss_con: 1.993 train_loss_sup: 0.778
+Test Accuracy at epoch: 60: 0.542
+epochs: [61/120] train_acc: 0.779 train_loss_con: 1.964 train_loss_sup: 0.759
+epochs: [62/120] train_acc: 0.782 train_loss_con: 1.943 train_loss_sup: 0.746
+epochs: [63/120] train_acc: 0.785 train_loss_con: 1.930 train_loss_sup: 0.739
+epochs: [64/120] train_acc: 0.785 train_loss_con: 1.927 train_loss_sup: 0.732
+epochs: [65/120] train_acc: 0.790 train_loss_con: 1.907 train_loss_sup: 0.722
+Test Accuracy at epoch: 65: 0.548
+epochs: [66/120] train_acc: 0.795 train_loss_con: 1.886 train_loss_sup: 0.704
+epochs: [67/120] train_acc: 0.794 train_loss_con: 1.894 train_loss_sup: 0.710
+epochs: [68/120] train_acc: 0.797 train_loss_con: 1.868 train_loss_sup: 0.693
+epochs: [69/120] train_acc: 0.800 train_loss_con: 1.858 train_loss_sup: 0.682
+epochs: [70/120] train_acc: 0.804 train_loss_con: 1.855 train_loss_sup: 0.675
+Test Accuracy at epoch: 70: 0.544
+epochs: [71/120] train_acc: 0.807 train_loss_con: 1.828 train_loss_sup: 0.664
+epochs: [72/120] train_acc: 0.810 train_loss_con: 1.822 train_loss_sup: 0.658
+epochs: [73/120] train_acc: 0.810 train_loss_con: 1.818 train_loss_sup: 0.657
+epochs: [74/120] train_acc: 0.814 train_loss_con: 1.805 train_loss_sup: 0.648
+epochs: [75/120] train_acc: 0.816 train_loss_con: 1.784 train_loss_sup: 0.637
+Test Accuracy at epoch: 75: 0.542
+epochs: [76/120] train_acc: 0.817 train_loss_con: 1.789 train_loss_sup: 0.634
+epochs: [77/120] train_acc: 0.821 train_loss_con: 1.756 train_loss_sup: 0.620
+epochs: [78/120] train_acc: 0.822 train_loss_con: 1.754 train_loss_sup: 0.618
+epochs: [79/120] train_acc: 0.824 train_loss_con: 1.746 train_loss_sup: 0.606
+epochs: [80/120] train_acc: 0.829 train_loss_con: 1.725 train_loss_sup: 0.593
+Test Accuracy at epoch: 80: 0.548
+epochs: [81/120] train_acc: 0.834 train_loss_con: 1.705 train_loss_sup: 0.580
+epochs: [82/120] train_acc: 0.836 train_loss_con: 1.699 train_loss_sup: 0.570
+epochs: [83/120] train_acc: 0.839 train_loss_con: 1.674 train_loss_sup: 0.558
+epochs: [84/120] train_acc: 0.840 train_loss_con: 1.667 train_loss_sup: 0.554
+epochs: [85/120] train_acc: 0.841 train_loss_con: 1.664 train_loss_sup: 0.548
+Test Accuracy at epoch: 85: 0.549
+epochs: [86/120] train_acc: 0.842 train_loss_con: 1.673 train_loss_sup: 0.548
+epochs: [87/120] train_acc: 0.844 train_loss_con: 1.657 train_loss_sup: 0.543
+epochs: [88/120] train_acc: 0.842 train_loss_con: 1.668 train_loss_sup: 0.547
+epochs: [89/120] train_acc: 0.845 train_loss_con: 1.655 train_loss_sup: 0.537
+epochs: [90/120] train_acc: 0.846 train_loss_con: 1.644 train_loss_sup: 0.534
+Test Accuracy at epoch: 90: 0.544
+epochs: [91/120] train_acc: 0.846 train_loss_con: 1.647 train_loss_sup: 0.533
+epochs: [92/120] train_acc: 0.847 train_loss_con: 1.641 train_loss_sup: 0.529
+epochs: [93/120] train_acc: 0.845 train_loss_con: 1.645 train_loss_sup: 0.535
+epochs: [94/120] train_acc: 0.848 train_loss_con: 1.638 train_loss_sup: 0.528
+epochs: [95/120] train_acc: 0.849 train_loss_con: 1.634 train_loss_sup: 0.524
+Test Accuracy at epoch: 95: 0.544
+epochs: [96/120] train_acc: 0.848 train_loss_con: 1.640 train_loss_sup: 0.527
+epochs: [97/120] train_acc: 0.848 train_loss_con: 1.629 train_loss_sup: 0.520
+epochs: [98/120] train_acc: 0.849 train_loss_con: 1.635 train_loss_sup: 0.522
+epochs: [99/120] train_acc: 0.851 train_loss_con: 1.629 train_loss_sup: 0.514
+epochs: [100/120] train_acc: 0.852 train_loss_con: 1.628 train_loss_sup: 0.520
+Test Accuracy at epoch: 100: 0.548
+epochs: [101/120] train_acc: 0.849 train_loss_con: 1.633 train_loss_sup: 0.517
+epochs: [102/120] train_acc: 0.850 train_loss_con: 1.621 train_loss_sup: 0.514
+epochs: [103/120] train_acc: 0.853 train_loss_con: 1.620 train_loss_sup: 0.509
+epochs: [104/120] train_acc: 0.854 train_loss_con: 1.607 train_loss_sup: 0.503
+epochs: [105/120] train_acc: 0.854 train_loss_con: 1.610 train_loss_sup: 0.506
+Test Accuracy at epoch: 105: 0.543
+epochs: [106/120] train_acc: 0.855 train_loss_con: 1.602 train_loss_sup: 0.501
+epochs: [107/120] train_acc: 0.854 train_loss_con: 1.609 train_loss_sup: 0.505
+epochs: [108/120] train_acc: 0.856 train_loss_con: 1.594 train_loss_sup: 0.496
+epochs: [109/120] train_acc: 0.855 train_loss_con: 1.610 train_loss_sup: 0.500
+epochs: [110/120] train_acc: 0.854 train_loss_con: 1.606 train_loss_sup: 0.502
+Test Accuracy at epoch: 110: 0.544
+epochs: [111/120] train_acc: 0.858 train_loss_con: 1.603 train_loss_sup: 0.495
+epochs: [112/120] train_acc: 0.856 train_loss_con: 1.595 train_loss_sup: 0.493
+epochs: [113/120] train_acc: 0.856 train_loss_con: 1.599 train_loss_sup: 0.497
+epochs: [114/120] train_acc: 0.856 train_loss_con: 1.598 train_loss_sup: 0.500
+epochs: [115/120] train_acc: 0.858 train_loss_con: 1.596 train_loss_sup: 0.488
+Test Accuracy at epoch: 115: 0.545
+epochs: [116/120] train_acc: 0.858 train_loss_con: 1.577 train_loss_sup: 0.484
+epochs: [117/120] train_acc: 0.859 train_loss_con: 1.581 train_loss_sup: 0.487
+epochs: [118/120] train_acc: 0.860 train_loss_con: 1.586 train_loss_sup: 0.486
+epochs: [119/120] train_acc: 0.860 train_loss_con: 1.581 train_loss_sup: 0.484
+epochs: [120/120] train_acc: 0.861 train_loss_con: 1.583 train_loss_sup: 0.481
+Final Test Accuracy: 0.54
