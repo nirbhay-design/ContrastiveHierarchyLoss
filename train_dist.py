@@ -4,7 +4,7 @@ import torch.nn.functional as F
 import torch.optim as optim
 import numpy as np
 from src.network.Network import Network, MLP
-from train_utils import yaml_loader, progress, evaluate, \
+from train_utils import yaml_loader, train, \
                         model_optimizer, \
                         loss_function, \
                         load_dataset
@@ -18,68 +18,6 @@ def ddp_setup(rank, world_size):
     os.environ['MASTER_ADDR'] = 'localhost'
     os.environ['MASTER_PORT'] = "4084"
     init_process_group(backend = 'nccl', rank = rank, world_size = world_size)
-
-def train(
-        model, mlp, train_loader,
-        test_loader, lossfunction, 
-        optimizer, mlp_optimizer, opt_lr_schedular, 
-        eval_every, n_epochs, device_id, return_logs=False): 
-    
-    tval = {'trainacc':[],"trainloss":[]}
-    device = torch.device(f"cuda:{device_id}")
-    model = model.to(device)
-    mlp = mlp.to(device)
-    for epochs in range(n_epochs):
-        model.train()
-        mlp.train()
-        cur_loss = 0
-        curacc = 0
-        cur_mlp_loss = 0
-        len_train = len(train_loader)
-        for idx , (data,target) in enumerate(train_loader):
-            data = data.to(device)
-            target = target.to(device)
-            
-            feats, proj_feat = model(data)
-            scores = mlp(feats.detach())            
-            
-            loss_con, loss_sup = lossfunction(proj_feat, scores, target)
-            
-            optimizer.zero_grad()
-            loss_con.backward()
-            optimizer.step()
-
-            mlp_optimizer.zero_grad()
-            loss_sup.backward()
-            mlp_optimizer.step()
-
-            cur_loss += loss_con.item() / (len_train)
-            cur_mlp_loss += loss_sup.item() / (len_train)
-            scores = F.softmax(scores,dim = 1)
-            _,predicted = torch.max(scores,dim = 1)
-            correct = (predicted == target).sum()
-            samples = scores.shape[0]
-            curacc += correct / (samples * len_train)
-            
-            if return_logs:
-                progress(idx+1,len(train_loader), loss_con=loss_con.item(), loss_sup=loss_sup.item(), gpu_id = device_id)
-        
-        opt_lr_schedular.step()
-
-        if epochs % eval_every == 0 and device_id == 0:
-            cur_test_acc = evaluate(model, mlp, test_loader, device, return_logs)
-            print(f"[GPU{device_id}] Test Accuracy at epoch: {epochs}: {cur_test_acc}")
-      
-        tval['trainacc'].append(float(curacc))
-        tval['trainloss'].append(float(cur_loss))
-        
-        print(f"[GPU{device_id}] epochs: [{epochs+1}/{n_epochs}] train_acc: {curacc:.3f} train_loss_con: {cur_loss:.3f} train_loss_sup: {cur_mlp_loss:.3f}")
-    
-    if device_id == 0:
-        final_test_acc = evaluate(model, mlp, test_loader, device, return_logs)
-        print(f"[GPU{device_id}] Final Test Accuracy: {final_test_acc}")
-
-    return model, tval
 
 def main(rank, world_size, config):
 
@@ -103,11 +41,8 @@ def main(rank, world_size, config):
     
     train_dl, test_dl, train_ds, test_ds = load_dataset(
         dataset_name=config['data_name'],
-        data_dir=config['data_dir'],
-        image_size = config['image_size'],
-        batch_size = config['batch_size'],
-        num_workers=config['num_workers'],
-        distributed = config['distributed'])
+        distributed = config['distributed'],
+        **config['data_params'])
     
     if rank == 0:
         print(f"# of Training Images: {len(train_ds)}")
@@ -118,6 +53,8 @@ def main(rank, world_size, config):
     eval_every = config['eval_every']
     n_epochs = config['n_epochs']
 
+    eval_id = 0
+    
     train(
         model,
         mlp,
@@ -130,6 +67,7 @@ def main(rank, world_size, config):
         eval_every,
         n_epochs,
         rank,
+        eval_id,
         return_logs
     )
 

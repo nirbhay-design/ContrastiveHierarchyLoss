@@ -38,11 +38,8 @@ if __name__ == "__main__":
     
     train_dl, test_dl, train_ds, test_ds = load_dataset(
         dataset_name = config['data_name'],
-        data_dir=config['data_dir'],
-        image_size = config['image_size'],
-        batch_size = config['batch_size'],
-        num_workers=config['num_workers'],
-        distributed = config['distributed'])
+        distributed = config['distributed'],
+        **config['data_params'])
     
     print(f"# of Training Images: {len(train_ds)}")
     print(f"# of Testing Images: {len(test_ds)}")
@@ -51,7 +48,7 @@ if __name__ == "__main__":
     return_logs = config['return_logs']
     eval_every = config['eval_every']
     n_epochs = config['n_epochs']
-    device = torch.device(f"cuda:{config['gpu_id']}")
+    device = config['gpu_id']
 
     train(
         model,
@@ -64,6 +61,7 @@ if __name__ == "__main__":
         opt_lr_schedular,
         eval_every,
         n_epochs,
+        device,
         device,
         return_logs
     )

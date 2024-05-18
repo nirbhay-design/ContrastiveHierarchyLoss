@@ -3,23 +3,38 @@ import torch
 from src.dataset.data import TieredImagenet
 import torchvision.transforms as transforms 
 
-# ti = TieredImagenet("/workspace/DATASETS/tiered-imagenet/tiered_imagenet", transforms.ToTensor(), False)
+train_transforms = transforms.Compose([
+        transforms.RandomResizedCrop(224),
+        transforms.RandomHorizontalFlip(0.6),
+        transforms.AugMix(),
+        transforms.ToTensor(),
+        transforms.Normalize([0.485, 0.456, 0.406],[0.229, 0.224, 0.225])
+    ])
 
-x1 = torch.rand(10,5)
-# x2 = torch.rand(10,5)
-labels = torch.tensor([1,2,3,1,4,5,23,465,200,200])
-lcswsupcon = LCAWSupConLoss(
-    "src/dataset/hierarchy_pkl", 
-    "src/dataset/hierarchy_pkl/tieredimg_idx_to_cls.pkl", 
-    sim = 'cosine')
-lcssupcon_mse = LCAWSupConLoss(
-    "src/dataset/hierarchy_pkl", 
-    "src/dataset/hierarchy_pkl/tieredimg_idx_to_cls.pkl",
-    sim = 'mse')
-# print(lcswsupcon(x1, labels))
-print(lcssupcon_mse(x1, labels))
+test_transforms = transforms.Compose([
+        transforms.Resize(224),
+        transforms.CenterCrop(224),
+        transforms.ToTensor(),
+        transforms.Normalize([0.5,0.5,0.5], [0.5,0.5,0.5])
+    ])
 
-supcon = SupConLoss()
-# print(supcon(x1,labels))
-print(lcswsupcon(x1, labels))
 
+data = TieredImagenet(
+    data_path = '/workspace/DATASETS/imagenet', 
+    split_path="datasets_splits/splits_tieredImageNet-H",
+    idx_to_cls_path = 'src/dataset/hierarchy_pkl/tieredimg_idx_to_cls.pkl',
+    transformations = train_transforms,
+    train = True)
+
+print(len(data))
+
+train_dl = torch.utils.data.DataLoader(
+        data,
+        batch_size = 32,
+        shuffle=True,
+        pin_memory=True,
+        num_workers = 0,
+    )
+
+for (img, label) in train_dl:
+    print(img.shape, label.shape)
