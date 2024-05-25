@@ -8,21 +8,21 @@ data_params:
   batch_size: 256
   num_workers: 0
   image_size: 224
-return_logs: True
+return_logs: False
 eval_every: 5
 n_epochs: 120
 gpu_id: 0
-opt: SGD
+opt: ADAM
 opt_params:
-  lr: !!float 1e-1
-  momentum: 0.9
+  lr: !!float 1e-2
+  # momentum: 0.9
 schedular_params:
-  step_size: 40 
+  step_size: 400 
   gamma: 0.1
-mlp_opt: SGD
+mlp_opt: ADAM
 mlp_opt_params:
   lr: !!float 1e-2
-  momentum: 0.9
+  # momentum: 0.9
 model_params:
   model_name: 'resnet18' 
   pretrained: True 
@@ -34,7 +34,7 @@ loss_params:
   hierarchy_dist_path: src/dataset/hierarchy_pkl
   idx_to_cls_path: src/dataset/hierarchy_pkl/tieredimg_idx_to_cls.pkl
   dataset_name: tiered-imagenet-224
-distributed: True
+distributed: False
 train_whole: True
 
   
