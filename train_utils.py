@@ -114,6 +114,69 @@ def train(
 
     return model, tval
 
+def train_whole(
+        model, mlp, train_loader,
+        test_loader, lossfunction, 
+        optimizer, mlp_optimizer, opt_lr_schedular, 
+        eval_every, n_epochs, device_id, eval_id, return_logs=False): 
+    
+    tval = {'trainacc':[],"trainloss":[]}
+    device = torch.device(f"cuda:{device_id}")
+    model = model.to(device)
+    mlp = mlp.to(device)
+    for epochs in range(n_epochs):
+        model.train()
+        mlp.train()
+        overall_loss = 0
+        cur_loss = 0
+        curacc = 0
+        cur_mlp_loss = 0
+        len_train = len(train_loader)
+        for idx , (data,target) in enumerate(train_loader):
+            data = data.to(device)
+            target = target.to(device)
+            
+            feats, proj_feat = model(data)
+            scores = mlp(feats)            
+            
+            loss_con, loss_sup = lossfunction(proj_feat, scores, target)
+            loss = loss_sup + 0.9 * loss_con
+            
+            optimizer.zero_grad()
+            mlp_optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+            mlp_optimizer.step()
+
+            overall_loss += loss.item() / (len_train)
+            cur_loss += loss_con.item() / (len_train)
+            cur_mlp_loss += loss_sup.item() / (len_train)
+            scores = F.softmax(scores,dim = 1)
+            _,predicted = torch.max(scores,dim = 1)
+            correct = (predicted == target).sum()
+            samples = scores.shape[0]
+            curacc += correct / (samples * len_train)
+            
+            if return_logs:
+                progress(idx+1,len(train_loader), loss_con=loss_con.item(), loss_sup=loss_sup.item(), loss=loss.item(), GPU = device_id)
+        
+        opt_lr_schedular.step()
+
+        if epochs % eval_every == 0 and device_id == eval_id:
+            cur_test_acc = evaluate(model, mlp, test_loader, device, return_logs)
+            print(f"[GPU{device_id}] Test Accuracy at epoch: {epochs}: {cur_test_acc}")
+      
+        tval['trainacc'].append(float(curacc))
+        tval['trainloss'].append(float(cur_loss))
+        
+        print(f"[GPU{device_id}] epochs: [{epochs+1}/{n_epochs}] train_acc: {curacc:.3f} train_loss_con: {cur_loss:.3f} train_loss_sup: {cur_mlp_loss:.3f} train_loss: {overall_loss:.3f}")
+    
+    if device_id == eval_id:
+        final_test_acc = evaluate(model, mlp, test_loader, device, return_logs)
+        print(f"[GPU{device_id}] Final Test Accuracy: {final_test_acc}")
+
+    return model, tval
+
 def loss_function(loss_type = 'lcacon', **kwargs):
     if loss_type == 'lcacon':
         return LCAConClsLoss(**kwargs)
